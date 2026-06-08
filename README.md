@@ -18,7 +18,6 @@ The system was originally built for inspecting **motorcycle side covers** on a p
 - [Scalability / use cases](#scalability--use-cases)
 - [Repository structure](#repository-structure)
 - [Setup guide](#setup-guide)
-- [What changed vs. original ESP32 sketch](#what-changed-vs-original-esp32-sketch)
 - [FAQ](#faq)
 
 ---
@@ -365,25 +364,6 @@ Expected serial output:
 [LED] GREEN  — GOOD!
 [STATE] ✅ Done — Ready for next image!
 ```
-
----
-
-## What changed vs. original ESP32 sketch
-
-| # | Change | Reason |
-|---|---|---|
-| 1 | Board: ESP32 → **ESP32-S3** | More SRAM, faster WiFi, USB-OTG |
-| 2 | Image buffer: `malloc` → **`ps_malloc`** (PSRAM) | Raises image size limit 50 KB → 200 KB |
-| 3 | `MAX_IMAGE_SIZE` raised to **200 KB** | Needed for OV5640 JPEG output |
-| 4 | GPIO remapped: 23/18/19 → **15/16/17** | GPIO 18/19 conflict with USB on S3 |
-| 5 | Added **PSRAM init check** in `setup()` | Clear error if board config is wrong |
-| 6 | MQTT payload adds **`unix_ms`** field | Timestream ingestion requires epoch ms |
-| 7 | `app.py`: DynamoDB → **Timestream** | Time-series DB better for inspection logs |
-| 8 | `app.py`: added `unix_ms` in IoT publish | ESP32-S3 logs timestamp to serial |
-| 9 | `clientId` updated to `ESP32S3-Defect-Classifier` | Avoids IoT Core client ID collision |
-
-All state-machine logic, MQTT TLS setup, and S3 upload isolation (scoped TLS client) are unchanged.
-
 ---
 
 ## FAQ
